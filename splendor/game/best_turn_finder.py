@@ -23,6 +23,8 @@ class BestTurnFinder:
         self.current_turns_sequence = []
         self.best_turns_sequence = []
         self.best_turns_sequence_points = 0
+        self.current_first_turns_sequence = []
+        self.all_first_turns_sequences = []
 
     def __updateBestTurnsSequence(self):
         current_turns_sequence_points = 0
@@ -37,7 +39,7 @@ class BestTurnFinder:
             self.best_turns_sequence = self.current_turns_sequence.copy()
             print("best {0} turns. points {1}".format(len(self.best_turns_sequence), self.best_turns_sequence_points))
 
-    def enumerateAllValidTurns(self):
+    def __enumerateAllValidTurns(self):
         turns = self.turns_enumerator.enumerateAllPossibleTurns()
         valid_turns = []
         for turn in turns:
@@ -46,12 +48,25 @@ class BestTurnFinder:
 
         return valid_turns
 
+    def enumerateAllValidTurnSequences(self, turns_sequence_length):
+        if turns_sequence_length == 0:
+            self.all_first_turns_sequences.append(self.current_first_turns_sequence.copy())
+            return
+        
+        valid_turns = self.__enumerateAllValidTurns()
+        for turn in valid_turns:
+            self.__playerTakeTurn(turn)
+            self.current_first_turns_sequence.append(turn)
+            self.enumerateAllValidTurnSequences(turns_sequence_length - 1)
+            self.__playerUndoTurn(turn)
+            self.current_first_turns_sequence.pop()
+
     def findTurnsHighestValueSequenceWithPrecalculatedBegginng(self, sequenceLength, valid_turns):
         for turn in valid_turns:
             self.__playerTakeTurn(turn)
             self.current_turns_sequence.append(turn)
         
-        self.findHighestValueTurnsSequence(sequenceLength - 1)
+        self.findHighestValueTurnsSequence(sequenceLength)
 
         for turn in valid_turns:
             self.__playerUndoTurn(turn)
@@ -62,10 +77,10 @@ class BestTurnFinder:
             self.__updateBestTurnsSequence()
             return
         
-        valid_turns = self.enumerateAllValidTurns()
+        valid_turns = self.__enumerateAllValidTurns()
         
-        if(sequenceLength >= 8):
-            print("enumerated {0} valid turns. sequence {1}".format(len(valid_turns), sequenceLength))
+        # if(sequenceLength >= 8):
+        #     print("enumerated {0} valid turns. sequence {1}".format(len(valid_turns), sequenceLength))
 
         for turn in valid_turns:
             self.__playerTakeTurn(turn)

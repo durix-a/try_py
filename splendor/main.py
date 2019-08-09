@@ -8,9 +8,9 @@ import os
 # print(finder.best_turns_sequence)
 # print(finder.best_turns_sequence_points)
 
-def findBestTurnsAsync(turn):
+def findBestTurnsAsync(turns_sequence):
     best_turn_finder = BestTurnFinder()
-    best_turn_finder.findTurnsHighestValueSequenceWithPrecalculatedBegginng(13, [turn])
+    best_turn_finder.findTurnsHighestValueSequenceWithPrecalculatedBegginng(8, turns_sequence)
     print(best_turn_finder.best_turns_sequence)
     print(best_turn_finder.best_turns_sequence_points)
     print(datetime.datetime.now())
@@ -18,9 +18,10 @@ def findBestTurnsAsync(turn):
 
 def main():
     finder = BestTurnFinder()
-    first_turns = finder.enumerateAllValidTurns()
+    finder.enumerateAllValidTurnSequences(2)
+    first_turns_sequences = finder.all_first_turns_sequences
     p = Pool(os.cpu_count())
-    print(p.map(findBestTurnsAsync, first_turns))
+    print(p.map(findBestTurnsAsync, first_turns_sequences))
 
 if __name__ == '__main__':
     main()
