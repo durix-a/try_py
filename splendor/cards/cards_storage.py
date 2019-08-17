@@ -2,6 +2,7 @@ import csv
 from cards.card import Card
 from cards.card_level import CardLevel
 from coins.coin_types import CoinTypes
+import os.path
 
 
 class CardsStorage:
@@ -11,7 +12,8 @@ class CardsStorage:
     def __init__(self):
         self.cards_storage = []
 
-        with open("data\\cards - main cards.csv") as cards_db:
+        db_file_path = os.path.join("data", "cards - main cards.csv")
+        with open(db_file_path) as cards_db:
             cards_db_reader = csv.reader(cards_db, delimiter=",")
             header_line_skipped = False
 
