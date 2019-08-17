@@ -27,3 +27,7 @@ class TestCoins(unittest.TestCase):
         
         self.assertEqual(0, coins_table.getCoinsCount(CoinTypes.GREEN))
 
+if __name__ == '__main__':
+    unittest.main()
+
+    

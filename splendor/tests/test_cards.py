@@ -188,4 +188,5 @@ class TestCards(unittest.TestCase):
         self.assertEqual(self.cards_db[12], Card(blue_cost=2, red_cost=2, level=CardLevel.TWO, discount=CoinTypes.RED))
 
 if __name__ == '__main__':
-    unittest.main(Card(white_cost=2, green_cost=2, level=CardLevel.ONE, discount=CoinTypes.BLACK))
+    unittest.main()
+

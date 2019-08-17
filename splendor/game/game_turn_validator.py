@@ -7,6 +7,13 @@ from coins.coins_table import CoinsTable
 class GameTurnValidator:
     max_coins_per_player = 10
 
+    def __init__(self):
+        self.all_coins_list = []
+        for coin in CoinTypes:
+            if coin != CoinTypes.UNKNOWN and coin != CoinTypes.ANY_COLOR:
+                self.all_coins_list.append(coin)
+
+
     def isTurnValid(self, turn : GameTurn, player : Player):
         if turn.getTakenCard():
             return self.__canPlayerTakeCoins(turn.getTakenCoins(), player) and self.__canPlayerBuyCard(player, turn.getTakenCard())
@@ -20,12 +27,7 @@ class GameTurnValidator:
         return True
         
     def __canPlayerBuyCard(self, player : Player, card : Card):
-        all_coins_list = []
-        for coin in CoinTypes:
-            if coin != CoinTypes.UNKNOWN and coin != CoinTypes.ANY_COLOR:
-                all_coins_list.append(coin)
-
-        for coin in all_coins_list:
+        for coin in self.all_coins_list:
             if player.getMaxBuyPrice(coin) < card.getCost(coin):
                 return False
         

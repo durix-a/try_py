@@ -17,6 +17,15 @@ class CoinsTable:
     def getCoinsCount(self, coin):
         return self.coins_count[coin]
 
+    def getAvailableCoins(self, min_coins_count = 1):
+        availableCoins = ()
+
+        for coin, coins_count in self.coins_count.items():
+            if coins_count >= min_coins_count and coin != CoinTypes.ANY_COLOR:
+                availableCoins += (coin, )
+
+        return availableCoins
+
     def takeCoins(self, coin, coins_count=1):
         assert((self.coins_count[coin] - coins_count) >= 0), "no more {0} coins".format(coin.name)
         self.coins_count[coin] -= coins_count

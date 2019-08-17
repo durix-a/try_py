@@ -26,6 +26,9 @@ class CardsTable:
     def getCard(self, card_level, open_card_index):
         return self.open_cards[card_level - 1][open_card_index]
 
+    def getAllOpenCards(self):
+        return [card for card in (self.open_cards[0] + self.open_cards[1] + self.open_cards[2]) if card]
+
     def takeCard(self, takkenCard : Card):
         card_index = 0
         for card in self.open_cards[takkenCard.level - 1]:

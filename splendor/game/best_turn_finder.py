@@ -21,7 +21,7 @@ class BestTurnFinder:
         self.turn_validator = GameTurnValidator()
         self.turns_enumerator = GameTurnsEnumerator(self.coins_table, self.cards_table)
         self.current_turns_sequence = []
-        self.best_turns_sequence = []
+        self.best_turns_sequences = []
         self.best_turns_sequence_points = 0
         self.current_first_turns_sequence = []
         self.all_first_turns_sequences = []
@@ -36,8 +36,11 @@ class BestTurnFinder:
         
         if current_turns_sequence_points > self.best_turns_sequence_points:
             self.best_turns_sequence_points = current_turns_sequence_points
-            self.best_turns_sequence = self.current_turns_sequence.copy()
-            print("best {0} turns. points {1}".format(len(self.best_turns_sequence), self.best_turns_sequence_points))
+            self.best_turns_sequences = []
+            self.best_turns_sequences.append(self.current_turns_sequence.copy())
+            # print("best {0} turns. points {1}".format(len(self.best_turns_sequences), self.best_turns_sequence_points))
+        elif current_turns_sequence_points == self.best_turns_sequence_points:
+            self.best_turns_sequences.append(self.current_turns_sequence.copy())
 
     def __enumerateAllValidTurns(self):
         turns = self.turns_enumerator.enumerateAllPossibleTurns()
