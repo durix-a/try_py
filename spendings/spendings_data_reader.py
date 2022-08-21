@@ -2,6 +2,7 @@ import xlrd
 import pandas
 import re
 import os
+import enum
 
 DATE_COLUMN_LABEL = "date"
 BUSINESS_COLUMN_LABEL = "business"
@@ -68,10 +69,42 @@ def read_cal_data(filename):
 def read_max_data(filename):
     return pandas.read_excel(filename, sheet_name="עסקאות במועד החיוב", skiprows=4, skipfooter=3, header=None, names=[DATE_COLUMN_LABEL, BUSINESS_COLUMN_LABEL, PAIED_SUM_COLUMN_LABEL], usecols=[0, 1, 5])
 
+class SPENDINGS_DATA_TYPE(enum.Enum):
+    OTHER = 0
+    CAL = 1
+    ISRACARD = 2
+    MAX = 3
+
+def filename_to_data_type(filename):
+    matched_file = re.search("Export_[0-9]{1,2}_[0-9]{4}\.xls", filename)
+    if(matched_file and matched_file[0] == filename):
+        return SPENDINGS_DATA_TYPE.ISRACARD
+    
+    matched_file = re.search("Transactions_[0-9]{2}_[0-9]{2}_[0-9]{4}.*\.xls", filename)
+    if(matched_file and matched_file[0] == filename):
+        return SPENDINGS_DATA_TYPE.CAL
+    
+    matched_file = re.search("transaction-details_export_[0-9]*\.xlsx", filename)
+    if(matched_file and matched_file[0] == filename):
+        return SPENDINGS_DATA_TYPE.MAX
+
+    return SPENDINGS_DATA_TYPE.OTHER
+
 def scan_folder_for_data(folderPath):
     filenames_list = next(os.walk(folderPath), (None, None, []))[2]
+    folder_data = pandas.DataFrame(columns=[DATE_COLUMN_LABEL, BUSINESS_COLUMN_LABEL, PAIED_SUM_COLUMN_LABEL])
+    data_readers_map = { SPENDINGS_DATA_TYPE.CAL : read_cal_data, 
+                         SPENDINGS_DATA_TYPE.ISRACARD : read_isracard_data, 
+                         SPENDINGS_DATA_TYPE.MAX : read_max_data }
 
     for filename in filenames_list:
-        matched_file = re.search("Export_[0-9]{1,2}_[0-9]{4}\.xls", filename)
-        if(matched_file[0]):
-            read_isracard_data
+        spendings = None
+        data_type = filename_to_data_type(filename)
+        filepath = os.path.join(folderPath, filename)
+        print("found {} file {}".format(data_type, filepath))
+
+        if(data_type != SPENDINGS_DATA_TYPE.OTHER):
+            spendings = data_readers_map[data_type](filepath)
+            folder_data = pandas.concat([folder_data, spendings], ignore_index=True)
+    
+    return folder_data
