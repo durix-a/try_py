@@ -25,5 +25,9 @@ def calculate_spendings_per_category(spendings : pandas.DataFrame, categories_li
         total_spendings_per_category["total"] = total_spendings_per_category["total"] + spent_sum
         spendings_category = spendings_per_category[category]
         spendings_category.loc[spendings_category.shape[0]] = row
+
+    for category, spendings_category in spendings_per_category.items():
+        spendings_category.loc[spendings_category.shape[0]] = ["", "total", total_spendings_per_category[category]]
+
     
     return total_spendings_per_category, spendings_per_category

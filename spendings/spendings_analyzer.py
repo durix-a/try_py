@@ -13,8 +13,15 @@ categories = pandas.read_excel("categories.xlsx")
 spendings = sdr.scan_folder_for_data("2022-08")
 total_result, result = sc.calculate_spendings_per_category(spendings, categories)
 
-for key, val in total_result.items():
-    print("{} - {:.2f}".format(key, val))
+# for key, val in total_result.items():
+#     print("{} - {:.2f}".format(key, val))
 
-for key, val in result.items():
-    print("{} - {}".format(key, val))
+# for key, val in result.items():
+#     print("{} - {}".format(key, val))
+
+with pandas.ExcelWriter('output.xlsx') as writer:
+    for key, val in result.items():
+        if(key):
+            val.to_excel(writer, sheet_name=key)
+        else:
+            val.to_excel(writer, sheet_name="хз")
