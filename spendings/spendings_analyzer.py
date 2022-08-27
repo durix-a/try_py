@@ -11,7 +11,8 @@ categories = pandas.read_excel("categories.xlsx")
 # spendings = pandas.concat([tanechka_isracard, andrey_checkpoint], ignore_index=True)
 # spendings = pandas.concat([tanechka_max], ignore_index=True)
 spendings = sdr.scan_folder_for_data("2022-08")
-result = sc.calculate_spendings_per_category(spendings, categories)
+spendings_calculator = sc.SpendingsCalculator(categories)
+result = spendings_calculator.calculate_spendings_per_category(spendings)
 
 # for key, val in result.items():
 #     print("{} - {}".format(key, val))

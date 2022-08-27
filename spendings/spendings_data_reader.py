@@ -58,13 +58,17 @@ def read_isracard_data(filename):
 
     return pandas.DataFrame({DATE_COLUMN_LABEL:date_list, BUSINESS_COLUMN_LABEL:business_list, PAIED_SUM_COLUMN_LABEL:sum_list})
 
-def convert_cal_sum(sum_value):
-    spent_sum_numeric = re.search("[0-9,\\.-]+", sum_value)
-    spent_sum_numeric = spent_sum_numeric.group(0).replace(",", "")
-    return float(spent_sum_numeric)
+class CalSumConverter:
+    def __init__(self):
+        self.compiled_converter_pattern = re.compile("[0-9,\\.-]+")
+
+    def __call__(self, sum_value):
+        spent_sum_numeric = self.compiled_converter_pattern.search(sum_value)
+        spent_sum_numeric = spent_sum_numeric.group(0).replace(",", "")
+        return float(spent_sum_numeric)
 
 def read_cal_data(filename):
-    return pandas.read_csv(filename, encoding="utf-16", sep="\t", skiprows=2, skipfooter=1, engine="python", header=0, names=[DATE_COLUMN_LABEL, BUSINESS_COLUMN_LABEL, PAIED_SUM_COLUMN_LABEL], usecols=[0, 1, 3], converters={PAIED_SUM_COLUMN_LABEL:convert_cal_sum})
+    return pandas.read_csv(filename, encoding="utf-16", sep="\t", skiprows=2, skipfooter=1, engine="python", header=0, names=[DATE_COLUMN_LABEL, BUSINESS_COLUMN_LABEL, PAIED_SUM_COLUMN_LABEL], usecols=[0, 1, 3], converters={PAIED_SUM_COLUMN_LABEL:CalSumConverter()})
 
 def read_max_data(filename):
     return pandas.read_excel(filename, sheet_name="עסקאות במועד החיוב", skiprows=4, skipfooter=3, header=None, names=[DATE_COLUMN_LABEL, BUSINESS_COLUMN_LABEL, PAIED_SUM_COLUMN_LABEL], usecols=[0, 1, 5])
