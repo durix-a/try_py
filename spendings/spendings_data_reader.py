@@ -68,7 +68,9 @@ class CalSumConverter:
         return float(spent_sum_numeric)
 
 def read_cal_data(filename):
-    return pandas.read_csv(filename, encoding="utf-16", sep="\t", skiprows=2, skipfooter=1, engine="python", header=0, names=[DATE_COLUMN_LABEL, BUSINESS_COLUMN_LABEL, PAIED_SUM_COLUMN_LABEL], usecols=[0, 1, 3], converters={PAIED_SUM_COLUMN_LABEL:CalSumConverter()})
+    returned_data = pandas.read_csv(filename, encoding="utf-16", sep="\t", skiprows=2, skipfooter=1, engine="python", header=0, usecols=["תאריך העסקה", "שם בית העסק", "סכום החיוב"], converters={"סכום החיוב":CalSumConverter()})
+    returned_data.columns = [DATE_COLUMN_LABEL, BUSINESS_COLUMN_LABEL, PAIED_SUM_COLUMN_LABEL]
+    return returned_data
 
 def read_max_data(filename):
     return pandas.read_excel(filename, sheet_name="עסקאות במועד החיוב", skiprows=4, skipfooter=3, header=None, names=[DATE_COLUMN_LABEL, BUSINESS_COLUMN_LABEL, PAIED_SUM_COLUMN_LABEL], usecols=[0, 1, 5])
