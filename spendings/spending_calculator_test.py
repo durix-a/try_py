@@ -45,3 +45,8 @@ class TestSpendingsCalculator:
         assert "06/01/2022" == cat3_data.loc[1].date
         assert "mechanic" == cat3_data.loc[1].business
         assert 55.51 == cat3_data.loc[1].paied_sum
+
+        total_data = result["total"]
+        assert total_data.shape == (4, 2)
+        assert "total" == total_data.loc[3].category
+        assert 551.03 == getattr(total_data.loc[3], "total sum")
